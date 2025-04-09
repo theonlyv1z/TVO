@@ -1,0 +1,733 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local MainWindow = Rayfield:CreateWindow({
+    Name = "The Vampire Origins",
+    Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+    LoadingTitle = "Loading... ",
+    LoadingSubtitle = "by your fucking ender V1Z",
+    Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
+ 
+    DisableRayfieldPrompts = false,
+    DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
+ 
+    ConfigurationSaving = {
+       Enabled = true,
+       FolderName = nil, -- Create a custom folder for your hub/game
+       FileName = "Big Hub"
+    },
+ 
+    Discord = {
+       Enabled = false, -- Prompt the user to join your Discord server if their executor supports it
+       Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
+       RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+    },
+ 
+    KeySystem = false, -- Set this to true to use our key system
+    KeySettings = {
+       Title = "Untitled",
+       Subtitle = "Key System",
+       Note = "No method of obtaining the key is provided", -- Use this to tell the user how to get a key
+       FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+       SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+       GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+       Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+    }
+ })
+
+ local Tab = MainWindow:CreateTab("Main", 4483362458) -- Title, Image
+
+
+ 
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+-- Section label
+Tab:CreateSection("No Salt Press Click")
+local Button = Tab:CreateButton({
+    Name = "No Salt Press (" .. LocalPlayer.Name .. ")",
+    Callback = function()
+        local wsChar = workspace:FindFirstChild("Players") and workspace.Players:FindFirstChild(LocalPlayer.Name)
+
+        local function dis_conn()
+            if wsChar and wsChar:FindFirstChild("Salt") and wsChar:FindFirstChild("Humanoid") then
+                for _, conn in next, getconnections(wsChar.Salt.Activated) do
+                    conn:Disable()
+                end
+                wsChar.Humanoid:UnequipTools()
+            end
+        end
+
+        dis_conn()
+
+        if wsChar and wsChar:FindFirstChild("Salt") then
+            wsChar.Salt.Equipped:Connect(dis_conn)
+        end
+    end,
+})
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+-- Section label
+Tab:CreateSection("Heal yourself (Must have Remove Healing Loop Turned on)")
+local Button = Tab:CreateButton({
+    Name = "Heal upon keybind F (" .. LocalPlayer.Name .. ")",
+    Callback = function()
+        local UserInputService = game:GetService("UserInputService")
+        local ReplicatedStorage = game:GetService("ReplicatedStorage")
+        local Workspace = game:GetService("Workspace")
+        
+        UserInputService.InputBegan:Connect(function(input, gameProcessed)
+            if gameProcessed then return end
+        
+            if input.KeyCode == Enum.KeyCode.F then
+                local dialogEvent = ReplicatedStorage:FindFirstChild("Events")
+                    and ReplicatedStorage.Events:FindFirstChild("System")
+                    and ReplicatedStorage.Events.System:FindFirstChild("Dialog")
+        
+                local target = Workspace:FindFirstChild("Map")
+                    and Workspace.Map:FindFirstChild("Interactables")
+                    and Workspace.Map.Interactables:FindFirstChild(" ")
+        
+                if dialogEvent and target and dialogEvent:IsA("RemoteEvent") then
+                    local args = {
+                        [1] = "Healing",
+                        [2] = target
+                    }
+                    dialogEvent:FireServer(unpack(args))
+                end
+            end
+        end)
+    end,
+})
+
+
+
+ local Tab = MainWindow:CreateTab("Universal", 4483362458) -- Title, Image
+
+ local Button = Tab:CreateButton({
+    Name = "IY Admin",
+    Callback = function()
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+    end,
+ })
+
+ local Button = Tab:CreateButton({
+   Name = "Hitbox Expander",
+   Callback = function()
+--[[
+
+Open source
+Made by !vcsk0#1516
+Credits to me
+
+Credits to the Owner Who Made The ESP Script
+
+]]
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local function isNumber(str)
+    if tonumber(str) ~= nil or str == 'inf' then
+        return true
+    end
+end
+
+-- Hitbox Variables
+local lp = Players.LocalPlayer
+local humanoid = lp.Character and lp.Character:FindFirstChildOfClass("Humanoid")
+
+getgenv().HitboxSize = 15
+getgenv().HitboxTransparency = 0.9
+getgenv().HitboxStatus = false
+getgenv().TeamCheck = false
+
+-- UI Library
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Vcsk/UI-Library/main/Source/MyUILib(Unamed).lua"))();
+local Window = Library:Create("Hitbox Expander")
+
+-- HOME TAB ONLY
+local HomeTab = Window:Tab("Home", "")
+HomeTab:InfoLabel("only works on some games!")
+HomeTab:Section("Settings")
+
+HomeTab:TextBox("Hitbox Size", function(value)
+    getgenv().HitboxSize = value
+end)
+
+HomeTab:TextBox("Hitbox Transparency", function(number)
+    getgenv().HitboxTransparency = number
+end)
+
+HomeTab:Section("Main")
+
+HomeTab:Toggle("Status: ", function(state)
+    getgenv().HitboxStatus = state
+    RunService.RenderStepped:Connect(function()
+        if HitboxStatus then
+            for _, v in pairs(Players:GetPlayers()) do
+                if v ~= lp and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                    if not TeamCheck or (lp.Team ~= v.Team) then
+                        pcall(function()
+                            local part = v.Character.HumanoidRootPart
+                            part.Size = Vector3.new(HitboxSize, HitboxSize, HitboxSize)
+                            part.Transparency = HitboxTransparency
+                            part.BrickColor = BrickColor.new("Really black")
+                            part.Material = "Neon"
+                            part.CanCollide = false
+                        end)
+                    end
+                end
+            end
+        else
+            for _, v in pairs(Players:GetPlayers()) do
+                if v ~= lp and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                    pcall(function()
+                        local part = v.Character.HumanoidRootPart
+                        part.Size = Vector3.new(2, 2, 1)
+                        part.Transparency = 1
+                        part.BrickColor = BrickColor.new("Medium stone grey")
+                        part.Material = "Plastic"
+                        part.CanCollide = false
+                    end)
+                end
+            end
+        end
+    end)
+end)
+
+HomeTab:Toggle("Team Check", function(state)
+    getgenv().TeamCheck = state
+end)
+
+HomeTab:Keybind("Toggle UI", Enum.KeyCode.F, function()
+    Library:ToggleUI()
+end)   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Universal ESP",
+   Callback = function()
+		loadstring(game:HttpGet(('https://raw.githubusercontent.com/cool83birdcarfly02six/UNIVERSALESPLTX/main/README.md'),true))()
+   end,
+})
+
+local Tab = MainWindow:CreateTab("Loops", 4483362458) -- Title, Image
+
+-- Section label
+Tab:CreateSection("Infinite Graveyard Resurrect Loop")
+
+-- Input to set the target player
+Tab:CreateInput({
+    Name = "Set Target Username",
+    PlaceholderText = "e.g. cybersrunu1234",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(Text)
+        targetName = Text
+        if graveyardToggle then
+            graveyardToggle:SetName("Graveyard Resurrect Loop (" .. targetName .. ")")
+        end
+    end,
+})
+
+-- Toggle to loop removing the GraveyardRessed cooldown
+graveyardToggle = Tab:CreateToggle({
+    Name = "Graveyard Resurrect Loop",
+    CurrentValue = false,
+    Flag = "Toggle_GraveyardLoop",
+    Callback = function(Value)
+        _G.GraveyardLoop = not Value -- stop when toggled off
+
+        if Value then
+            spawn(function()
+                while task.wait(0.5) do
+                    if _G.GraveyardLoop then break end
+                    if not targetName or targetName == "" then continue end
+
+                    local target = workspace.Players:FindFirstChild(targetName)
+                    local ressed = target and target:FindFirstChild("GraveyardRessed")
+
+                    local wsChar = workspace.Players:FindFirstChild(LocalPlayer.Name)
+                    local event = wsChar and wsChar:FindFirstChild("Salt") and wsChar.Salt:FindFirstChild("Event")
+
+                    if ressed and event and event:IsA("RemoteEvent") then
+                        event:FireServer(ressed)
+                    end
+                end
+            end)
+        end
+    end,
+})
+
+
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local targetName = ""
+local healingToggle -- forward reference
+
+-- Section label
+Tab:CreateSection("Remove Healing Loop")
+
+-- Input to set the target player
+Tab:CreateInput({
+    Name = "Set Target Username",
+    PlaceholderText = "e.g. cybersrunu1234",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(Text)
+        targetName = Text
+        if healingToggle then
+            healingToggle:SetName("Remove Healing Loop (" .. targetName .. ")")
+        end
+    end,
+})
+
+-- Toggle to remove healing from the target
+healingToggle = Tab:CreateToggle({
+    Name = "Remove Healing Loop",
+    CurrentValue = false,
+    Flag = "Toggle_HealingLoop",
+    Callback = function(Value)
+        _G.HealingLoop = not Value -- stop when toggled off
+
+        if Value then
+            spawn(function()
+                while task.wait(0.5) do
+                    if _G.HealingLoop then break end
+                    if not targetName or targetName == "" then continue end
+
+                    local healed = Players:FindFirstChild(targetName)
+                        and Players[targetName]:FindFirstChild("Healed")
+
+                    local wsChar = workspace:FindFirstChild("Players") and workspace.Players:FindFirstChild(LocalPlayer.Name)
+                    local event = wsChar and wsChar:FindFirstChild("Salt") and wsChar.Salt:FindFirstChild("Event")
+
+                    if healed and event and event:IsA("RemoteEvent") then
+                        event:FireServer(healed)
+                    end
+                end
+            end)
+        end
+    end,
+})
+
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local targetName = ""
+local influencedToggle -- forward reference
+
+-- Section label
+Tab:CreateSection("No Influenced Loop")
+
+-- Input for target player
+Tab:CreateInput({
+    Name = "Set Target Username",
+    PlaceholderText = "e.g. cybersrunu1234",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(Text)
+        targetName = Text
+        if influencedToggle then
+            influencedToggle:SetName("No Influenced Loop (" .. targetName .. ")")
+        end
+    end,
+})
+
+-- Toggle to loop-fire Influenced value
+influencedToggle = Tab:CreateToggle({
+    Name = "No Influenced Loop",
+    CurrentValue = false,
+    Flag = "Toggle_InfluencedLoop",
+    Callback = function(Value)
+        _G.influencedLoop = not Value -- Stop when toggled off
+
+        if Value then
+            spawn(function()
+                while task.wait(0.5) do
+                    if _G.influencedLoop then break end
+                    if not targetName or targetName == "" then continue end
+
+                    local targetPlayer = workspace:FindFirstChild("Players") and workspace.Players:FindFirstChild(targetName)
+                    local sender = workspace.Players:FindFirstChild(LocalPlayer.Name)
+
+                    if targetPlayer and sender then
+                        local influenced = targetPlayer:FindFirstChild("Influenced")
+                        local event = sender:FindFirstChild("Salt") and sender.Salt:FindFirstChild("Event")
+
+                        if influenced and event and event:IsA("RemoteEvent") then
+                            event:FireServer(influenced)
+                        end
+                    end
+                end
+            end)
+        end
+    end,
+})
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+-- Section label
+Tab:CreateSection("Remove Gilbert Ring")
+
+local Toggle = Tab:CreateToggle({
+    Name = "Remove Gilbert Ring limit (" .. LocalPlayer.Name .. ")",
+    CurrentValue = false,
+    Flag = "Toggle_GilbertLoop",
+    Callback = function(Value)
+        _G.GilbertLoop = Value
+
+        if Value then
+            spawn(function()
+                while task.wait(0.5) do
+                    if not _G.GilbertLoop then break end
+
+                    local playerFolder = workspace:FindFirstChild("Players")
+                    local selfChar = playerFolder and playerFolder:FindFirstChild(LocalPlayer.Name)
+                    local gilbert = selfChar and selfChar:FindFirstChild("GilbertCounter")
+                    local event = selfChar and selfChar:FindFirstChild("Salt") and selfChar.Salt:FindFirstChild("Event")
+
+                    if gilbert and event and event:IsA("RemoteEvent") then
+                        event:FireServer(gilbert)
+                    end
+                end
+            end)
+        end
+    end,
+})
+
+
+
+
+
+local Tab = MainWindow:CreateTab("Channel", 4483362458) -- Title, Image
+
+-- Section label
+Tab:CreateSection("Channel yourself")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local Button = Tab:CreateButton({
+    Name = "Self Channel (" .. LocalPlayer.Name .. ")",
+    Callback = function()
+        local args = {
+            [1] = "phasmatos magicae",
+            [2] = workspace:WaitForChild("Players"):WaitForChild(LocalPlayer.Name),
+            [4] = LocalPlayer.Character and LocalPlayer.Character:WaitForChild("HumanoidRootPart")
+        }
+
+        game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Action"):WaitForChild("SpellEvent"):FireServer(unpack(args))
+    end,
+})
+
+
+-- Section label
+Tab:CreateSection("Remove your channel (To channel yourself INFINITE Times)")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local Button = Tab:CreateButton({
+    Name = "Remove your current self-channel (" .. LocalPlayer.Name .. ")",
+    Callback = function()
+        local wsChar = workspace:FindFirstChild("Players") and workspace.Players:FindFirstChild(LocalPlayer.Name)
+
+        if wsChar and wsChar:FindFirstChild("Channeled") and wsChar:FindFirstChild("Salt") then
+            local args = {
+                [1] = wsChar.Channeled
+            }
+
+            local event = wsChar.Salt:FindFirstChild("Event")
+            if event and event:IsA("RemoteEvent") then
+                event:FireServer(unpack(args))
+            end
+        end
+    end,
+})
+
+local Tab = MainWindow:CreateTab("Everyone", 4483362458) -- Title, Image
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Section label
+Tab:CreateSection("Remove EVERYONE'S Cooldowns")
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local Toggle = Tab:CreateToggle({
+    Name = "Remove everyone's cooldowns",
+    CurrentValue = false,
+    Flag = "Toggle_AllCooldowns",
+    Callback = function(Value)
+        _G.doNOT = not Value -- stop when toggled off
+
+        if Value then
+            spawn(function()
+                while task.wait() do
+                    if _G.doNOT then break end
+
+                    for _, plr in pairs(Players:GetPlayers()) do
+                        if plr ~= LocalPlayer then
+                            local cooldowns = plr:FindFirstChild("Cooldown")
+                            if cooldowns then
+                                for _, des in pairs(cooldowns:GetChildren()) do
+                                    pcall(function()
+                                        local wsChar = workspace:FindFirstChild("Players") and workspace.Players:FindFirstChild(LocalPlayer.Name)
+                                        local event = wsChar and wsChar:FindFirstChild("Salt") and wsChar.Salt:FindFirstChild("Event")
+
+                                        if event and event:IsA("RemoteEvent") then
+                                            event:FireServer(des)
+                                        end
+                                    end)
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end,
+})
+
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local selectedPath
+local targetName = ""
+local toggleObject
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local targetName = ""
+local kickLoopToggle -- forward reference
+
+-- Section label
+Tab:CreateSection("Kick Loop")
+
+-- Input for setting target player
+Tab:CreateInput({
+    Name = "Set Target Username",
+    PlaceholderText = "Leave empty to kick everyone",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(Text)
+        targetName = Text
+        if kickLoopToggle then
+            local nameLabel = (targetName and targetName ~= "") and ("Kick Loop (" .. targetName .. ")") or "Kick Everyone Loop"
+            kickLoopToggle:SetName(nameLabel)
+        end
+    end,
+})
+
+-- Toggle to start/stop loop
+kickLoopToggle = Tab:CreateToggle({
+    Name = "Kick Loop",
+    CurrentValue = false,
+    Flag = "Toggle_KickLoop",
+    Callback = function(Value)
+        _G.KickLoopActive = not Value -- stop when toggled off
+
+        if Value then
+            spawn(function()
+                while task.wait(0.5) do
+                    if _G.KickLoopActive then break end
+
+                    local wsChar = workspace:FindFirstChild("Players") and workspace.Players:FindFirstChild(LocalPlayer.Name)
+                    local event = wsChar and wsChar:FindFirstChild("Salt") and wsChar.Salt:FindFirstChild("Event")
+
+                    if event and event:IsA("RemoteEvent") then
+                        if not targetName or targetName == "" then
+                            -- Kick everyone except self
+                            for _, plr in pairs(Players:GetPlayers()) do
+                                if plr ~= LocalPlayer then
+                                    event:FireServer(plr)
+                                end
+                            end
+                        else
+                            -- Kick one specific player
+                            local targetPlayer = Players:FindFirstChild(targetName)
+                            if targetPlayer then
+                                event:FireServer(targetPlayer)
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end,
+})
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Create Misc Tab 
+local Tab = MainWindow:CreateTab("Misc", 4483362458)
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- === CUSTOM PATH SECTION ===
+Tab:CreateSection("Fire Custom Path (DEX Required)")
+
+Tab:CreateInput({
+    Name = "Set Path",
+    PlaceholderText = "e.g. workspace.Players.bg9.InaduImmortality",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(Text)
+        local success, result = pcall(function()
+            return loadstring("return " .. Text)()
+        end)
+        if success and result then
+            selectedPath = result
+            print("[✔] Custom path set:", result)
+        else
+            selectedPath = nil
+            warn("[✘] Invalid path:", tostring(Text))
+        end
+    end,
+})
+
+Tab:CreateButton({
+    Name = "FireServer with Custom Path",
+    Callback = function()
+        if not selectedPath then
+            warn("[✘] No valid path set.")
+            return
+        end
+
+        local wsChar = workspace:FindFirstChild("Players") and workspace.Players:FindFirstChild(LocalPlayer.Name)
+        local event = wsChar and wsChar:FindFirstChild("Salt") and wsChar.Salt:FindFirstChild("Event")
+
+        if event and event:IsA("RemoteEvent") then
+            event:FireServer(selectedPath)
+            print("[✔] Fired with:", selectedPath)
+        else
+            warn("[✘] Salt Event not found.")
+        end
+    end,
+})
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- === KICK PLAYER SECTION ===
+Tab:CreateSection("Kick Player")
+
+Tab:CreateInput({
+    Name = "Set Target Username",
+    PlaceholderText = "e.g. bg9",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(Text)
+        targetName = Text
+    end,
+})
+
+Tab:CreateButton({
+    Name = "Kick Target",
+    Callback = function()
+        if not targetName or targetName == "" then
+            warn("No target name set.")
+            return
+        end
+
+        local targetPlayer = Players:FindFirstChild(targetName)
+        local wsChar = workspace:FindFirstChild("Players") and workspace.Players:FindFirstChild(LocalPlayer.Name)
+        local event = wsChar and wsChar:FindFirstChild("Salt") and wsChar.Salt:FindFirstChild("Event")
+
+        if targetPlayer and event and event:IsA("RemoteEvent") then
+            event:FireServer(targetPlayer)
+        else
+            warn("Target or event not found.")
+        end
+    end,
+})
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- === REMOVE ABILITIES SECTION ===
+Tab:CreateSection("Remove Abilities")
+
+Tab:CreateInput({
+    Name = "Set Target Username",
+    PlaceholderText = "e.g. cybersrunu1234",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(Text)
+        targetName = Text
+    end,
+})
+
+Tab:CreateButton({
+    Name = "Remove Abilities from Player",
+    Callback = function()
+        if not targetName or targetName == "" then
+            warn("No target name set.")
+            return
+        end
+
+        local targetPlayer = Players:FindFirstChild(targetName)
+        local wsRemover = workspace:FindFirstChild("Players") and workspace.Players:FindFirstChild(LocalPlayer.Name)
+
+        if targetPlayer and wsRemover then
+            local cooldown = targetPlayer:FindFirstChild("Cooldown")
+            local event = wsRemover:FindFirstChild("Salt") and wsRemover.Salt:FindFirstChild("Event")
+
+            if cooldown and event and event:IsA("RemoteEvent") then
+                event:FireServer(cooldown)
+            else
+                warn("Missing 'Cooldown' or Event.")
+            end
+        else
+            warn("Target or remover player not found.")
+        end
+    end,
+})
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local targetName = "" -- user-defined
+local toggleObject -- forward declaration
+
+-- Section label
+Tab:CreateSection("No Cooldown Loop")
+
+-- Input field for target username
+Tab:CreateInput({
+    Name = "Set Target Username",
+    PlaceholderText = "e.g. cybersrunu1234",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(Text)
+        targetName = Text
+        if toggleObject then
+            toggleObject:SetName("No Cooldown (" .. targetName .. ")")
+        end
+    end,
+})
+
+-- Toggle to run the loop on the typed username
+toggleObject = Tab:CreateToggle({
+    Name = "No Cooldown",
+    CurrentValue = false,
+    Flag = "Toggle_CooldownLoop",
+    Callback = function(Value)
+        _G.MultiCooldownLoop = not Value -- Invert to stop when toggled off
+
+        if Value then
+            spawn(function()
+                while task.wait(0.5) do
+                    if _G.MultiCooldownLoop then break end
+                    if not targetName or targetName == "" then continue end
+
+                    local target = Players:FindFirstChild(targetName)
+                    local cooldowns = target and target:FindFirstChild("Cooldown")
+
+                    local wsSender = workspace:FindFirstChild("Players") and workspace.Players:FindFirstChild(LocalPlayer.Name)
+                    local event = wsSender and wsSender:FindFirstChild("Salt") and wsSender.Salt:FindFirstChild("Event")
+
+                    if cooldowns and event then
+                        for _, des in pairs(cooldowns:GetChildren()) do
+                            pcall(function()
+                                event:FireServer(des)
+                            end)
+                        end
+                    end
+                end
+            end)
+        end
+    end,
+})
